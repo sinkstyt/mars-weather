@@ -26,14 +26,11 @@ $('#get-pic').on("click", function() {
     const body = JSON.parse(response);
     const picture = body["url"];
     $('.show-pic').append(`<img src=${picture} alt=${body["explanation"]}>`);
+    $('.show-pic').append(`<p>${body["explanation"]}</p>`);
     
   }, function(error) {
     $('.results-display').append(`There was an error processing your request: ${error}`);
   });
 });
-
-
-// Astronomy pic of the day
-
 
 // views from the Mars Rover
