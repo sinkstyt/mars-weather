@@ -4,11 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
 import InsightService from './insight-service.js';
 import AstronomyPic from './astronomy-pic-service.js';
+import MarsPics from './mars-rover-service.js';
 
-// Write a function that deals with Sols (Martian days since the Mars Rover landed) and converts them to days on the Earth's calendar
-
-// Martian weather API query: Display the per-SOL summary data for each of the last seven available Sols (Martian Days). Wind? Temp? Pressure? which units?
 $('#get-weather').on("click", function() {
+  $('.results-display').empty();
   let promise = InsightService.getWeather();
   promise.then(function(response) {
     const body = JSON.parse(response);
@@ -20,7 +19,9 @@ $('#get-weather').on("click", function() {
     $('.results-display').append(`There was an error processing your request: ${error}`);
   });
 });
+
 $('#get-pic').on("click", function() {
+  $('.show-pic').empty();
   let promise = AstronomyPic.getPic();
   promise.then(function(response) {
     const body = JSON.parse(response);
@@ -33,4 +34,20 @@ $('#get-pic').on("click", function() {
   });
 });
 
-// views from the Mars Rover
+$('#get-pics').on("click", function() {
+  $('.results-display').empty();
+  let promise = MarsPics.getPicsEarthDay(returnTodayAsString());
+  promise.then(function(response) {
+    const body = JSON.parse(response);
+    for (let i = 0; i < body.photos.length; i++) {
+      $('.results-display').append(`<img src=${body.photos[i]["img_src"]}> <p>${body.photos[i]["camera"]["full_name"]}</p><br><p>Taken on ${body.photos[i]["earth_date"]}</p>`);
+    }
+  }, function(error) {
+    $('.results-display').append(`There was an error. Namely, ${error}`);
+  });
+});
+function returnTodayAsString() {
+  let earthDate = new Date();
+  earthDate.setDate(earthDate.getDate()-1);
+  return earthDate.toISOString().slice(0,10);
+}
